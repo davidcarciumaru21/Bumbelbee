@@ -8,6 +8,8 @@ import static org.firstinspires.ftc.teamcode.global.SystemsConstants.IntakeConst
 
 import androidx.appcompat.widget.TintTypedArray;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 public class Intake {
 
     private final DcMotorEx intake;
@@ -28,5 +30,9 @@ public class Intake {
 
     public void stop() {
         intake.setPower(0.0);
+    }
+
+    public double getCurrent() {
+        return intake.getCurrent(CurrentUnit.AMPS);
     }
 }
