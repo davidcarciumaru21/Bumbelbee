@@ -42,23 +42,24 @@ public class ManualRobotTeleOp extends OpMode {
     public void init() {
         timer = new ElapsedTime();
 
-        frontLeftMotor = hardwareMap.dcMotor.get("FrontLeftMotor");
-        backLeftMotor = hardwareMap.dcMotor.get("BackLeftMotor");
-        frontRightMotor = hardwareMap.dcMotor.get("FrontRightMotor");
-        backRightMotor = hardwareMap.dcMotor.get("BackRightMotor");
+        frontLeftMotor = hardwareMap.dcMotor.get("FrontLeft");
+        backLeftMotor = hardwareMap.dcMotor.get("BackLeft");
+        frontRightMotor = hardwareMap.dcMotor.get("FrontRight");
+        backRightMotor = hardwareMap.dcMotor.get("BackRight");
 
         outtake = new Outtake(hardwareMap);
         intake = new Intake(hardwareMap);
         deflector = new Deflector(hardwareMap);
         stopper = new Stopper(hardwareMap);
 
-        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         frontLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
