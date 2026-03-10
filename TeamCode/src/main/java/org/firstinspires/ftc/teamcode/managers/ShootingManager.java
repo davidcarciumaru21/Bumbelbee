@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.global.SystemsConstants;
 import org.firstinspires.ftc.teamcode.systems.Deflector;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Outtake;
+import org.firstinspires.ftc.teamcode.systems.Indexer;
 
 import org.firstinspires.ftc.teamcode.systems.Stopper;
 import org.firstinspires.ftc.teamcode.utils.MathUtils;
@@ -24,6 +25,7 @@ public class ShootingManager {
     private final Outtake outtake;
     private final Stopper stopper;
     private final Deflector deflector;
+    private final Indexer indexer;
 
     private final IntakingManager intakingManager;
 
@@ -41,10 +43,12 @@ public class ShootingManager {
     public ShootingManager(Outtake outtake,
                            Stopper stopper,
                            Deflector deflector,
+                           Indexer indexer,
                            IntakingManager intakingManager) {
         this.outtake = outtake;
         this.stopper = stopper;
         this.deflector = deflector;
+        this.indexer = indexer;
 
         this.intakingManager = intakingManager;
 
@@ -161,6 +165,7 @@ public class ShootingManager {
         switch (currentState) {
 
             case IDLE:
+                indexer.off();
                 stopper.close();
                 break;
 
@@ -172,11 +177,13 @@ public class ShootingManager {
 
             case SHOOT:
                 intakingManager.shootPull();
+                indexer.pull();
                 if (timer.milliseconds() > THREE_BALLS_TIME) setState(State.PULL_STOPER);
 
                 break;
 
             case PULL_STOPER:
+                indexer.off();
                 intakingManager.off();
                 stopper.close();
                 if (timer.milliseconds() > TIME_TO_CLOSE) setState(State.IDLE);

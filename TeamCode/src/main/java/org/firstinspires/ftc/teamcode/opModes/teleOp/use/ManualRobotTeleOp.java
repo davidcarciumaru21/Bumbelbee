@@ -6,9 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.systems.Deflector;
+import org.firstinspires.ftc.teamcode.systems.Indexer;
 import org.firstinspires.ftc.teamcode.systems.Outtake;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
@@ -17,7 +19,7 @@ import org.firstinspires.ftc.teamcode.systems.Stopper;
 public class ManualRobotTeleOp extends OpMode {
 
     private TelemetryManager panelsTelemetry;
-
+    private VoltageSensor voltageSensor;
     private DcMotor frontLeftMotor;
     private DcMotor backLeftMotor;
     private DcMotor frontRightMotor;
@@ -31,6 +33,7 @@ public class ManualRobotTeleOp extends OpMode {
     private Intake intake;
     private Deflector deflector;
     private Stopper stopper;
+    private Indexer indexer;
 
     private double rpm = 0.0, pose = 0.0;
 
@@ -41,7 +44,7 @@ public class ManualRobotTeleOp extends OpMode {
     @Override
     public void init() {
         timer = new ElapsedTime();
-
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         frontLeftMotor = hardwareMap.dcMotor.get("FrontLeft");
         backLeftMotor = hardwareMap.dcMotor.get("BackLeft");
         frontRightMotor = hardwareMap.dcMotor.get("FrontRight");
@@ -51,6 +54,7 @@ public class ManualRobotTeleOp extends OpMode {
         intake = new Intake(hardwareMap);
         deflector = new Deflector(hardwareMap);
         stopper = new Stopper(hardwareMap);
+        indexer = new Indexer(hardwareMap);
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -59,7 +63,6 @@ public class ManualRobotTeleOp extends OpMode {
         backLeftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         frontRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
@@ -96,15 +99,23 @@ public class ManualRobotTeleOp extends OpMode {
         outtake.update(timer.seconds());
         deflector.move(pose);
         intake.pull();
-        if (gamepad1.bWasPressed()) stopper.open();
-        if (gamepad1.aWasPressed()) stopper.close();
+        if (gamepad1.bWasPressed()) {
+            stopper.open();
+            indexer.pull();
+        }
+        if (gamepad1.aWasPressed()) {
+            indexer.off();
+            stopper.close();
+        }
         timer.reset();
 
         telemetry.addData("rpm", rpm);
         telemetry.addData("pose", pose);
         telemetry.addData("outtake speed", outtake.getRPM());
+        telemetry.addData("intake speed", indexer.getSpeed());
         telemetry.update();
 
+        //telemetry.addData("watts", intake.getCurrent() * voltageSensor.getVoltage());
         panelsTelemetry.addData("current rpm", outtake.getRPM());;
         panelsTelemetry.addData("target rpm", rpm);
         panelsTelemetry.addData("power", outtake.getPower());
