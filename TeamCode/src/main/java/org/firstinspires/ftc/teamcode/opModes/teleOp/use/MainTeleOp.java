@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
+import org.firstinspires.ftc.teamcode.systems.Turret;
 
 @TeleOp(name = "MainTeleOp", group = "use")
 public class MainTeleOp extends OpMode {
@@ -38,6 +39,7 @@ public class MainTeleOp extends OpMode {
     private Indexer indexer;
     private Deflector deflector;
     private Outtake outtake;
+    private Turret turret;
     private Stopper stopper;
 
     private IMU imu;
@@ -55,7 +57,7 @@ public class MainTeleOp extends OpMode {
     private Follower follower;
 
     private double forward = 0.0, strafe = 0.0, rotation = 0.0;
-    private boolean turretAim = false;
+    private boolean turretAim = true;
     private boolean isRelocalizing = false;
 
     private boolean gamepad1IsActive = false;
@@ -88,11 +90,13 @@ public class MainTeleOp extends OpMode {
             follower.setStartingPose(new Pose(18.392523364485978, 120, Math.toRadians(-37)));
 
         }
+        follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
         follower.update();
         imuOffset = Math.toDegrees(follower.getPose().getHeading());
 
         intake = new Intake(hardwareMap);
         indexer = new Indexer(hardwareMap);
+        turret = new Turret(hardwareMap, indexer.getTurret());
         deflector = new Deflector(hardwareMap);
         outtake = new Outtake(hardwareMap);
         stopper = new Stopper(hardwareMap);
@@ -122,6 +126,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        turret.update();
         double currentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         double delta = currentYaw - lastImuYaw;
@@ -170,9 +175,25 @@ public class MainTeleOp extends OpMode {
         if (gamepad1.rightBumperWasPressed()) shootingManager.shoot();
         if (gamepad1.xWasPressed()) intakingManager.togglePull();
         if (gamepad1.yWasPressed()) intakingManager.reverse();
+        if(gamepad1.aWasPressed()) turretAim = !turretAim;
 
         follower.update();
+        if(turretAim){
+            double targetHeading = Math.atan2(
+                    Poses.blueGoalPose.getY() - follower.getPose().getY(),
+                    Poses.blueGoalPose.getX() - follower.getPose().getX()
+            );
 
+            double currentHeading = follower.getPose().getHeading();
+
+            double error = targetHeading - currentHeading;
+
+            while (error > Math.PI)  error -= 2 * Math.PI;
+            while (error < -Math.PI) error += 2 * Math.PI;
+
+            double kP = 1.1;
+            turret.setTargetAngle(Math.toDegrees(error));
+        }
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.redGoalPose),

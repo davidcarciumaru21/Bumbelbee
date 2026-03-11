@@ -32,6 +32,7 @@ public class Intake {
         intake.setPower(0.0);
     }
 
+
     public double getCurrent() {
         return intake.getCurrent(CurrentUnit.AMPS);
     }

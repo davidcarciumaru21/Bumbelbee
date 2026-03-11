@@ -14,16 +14,16 @@ public class Turret {
 
     private double targetAngle;
 
-    private double kP = 0.015;
-    private double kD = 0.0006;
+    private double kP = 0.02;
+    private double kD = 0.001;
 
     private double lastError;
 
     private static final double TICKS_PER_REV = 8192.0;
 
-    public Turret(HardwareMap hardwareMap) {
-        turret = hardwareMap.get(CRServo.class, "turret");
-        encoder = hardwareMap.get(DcMotorEx.class, "turretEncoder");
+    public Turret(HardwareMap hardwareMap, DcMotorEx turretE) {
+        turret = hardwareMap.get(CRServo.class, "Turret");
+        encoder = turretE;
 
         encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         encoder.setMode(DcMotorEx.RunMode.RUN_WITHOUT_ENCODER);
@@ -34,7 +34,7 @@ public class Turret {
     }
 
     public double getCurrentAngle() {
-        return encoder.getCurrentPosition() / TICKS_PER_REV * 360.0;
+        return (double) encoder.getCurrentPosition() / 6 / TICKS_PER_REV * 360.0;
     }
 
     public void update() {
@@ -52,9 +52,10 @@ public class Turret {
 
         power = Math.max(-1, Math.min(1, power));
 
+
         if (Math.abs(error) < 1) power = 0;
 
-        turret.setPower(power);
+        turret.setPower(-power);
 
         lastError = error;
     }

@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.systems.Indexer;
 import org.firstinspires.ftc.teamcode.systems.Outtake;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
+import org.firstinspires.ftc.teamcode.systems.Turret;
 
 @TeleOp(name = "ManualRobotTeleOp", group = "use")
 public class ManualRobotTeleOp extends OpMode {
@@ -32,6 +33,7 @@ public class ManualRobotTeleOp extends OpMode {
     private Outtake outtake;
     private Intake intake;
     private Deflector deflector;
+    private Turret turret;
     private Stopper stopper;
     private Indexer indexer;
 
@@ -53,8 +55,10 @@ public class ManualRobotTeleOp extends OpMode {
         outtake = new Outtake(hardwareMap);
         intake = new Intake(hardwareMap);
         deflector = new Deflector(hardwareMap);
-        stopper = new Stopper(hardwareMap);
         indexer = new Indexer(hardwareMap);
+        turret = new Turret(hardwareMap, indexer.getTurret());
+        stopper = new Stopper(hardwareMap);
+
 
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);
         backLeftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -121,7 +125,7 @@ public class ManualRobotTeleOp extends OpMode {
         telemetry.addData("rpm", rpm);
         telemetry.addData("pose", pose);
         telemetry.addData("outtake speed", outtake.getRPM());
-        telemetry.addData("indexer speed", indexer.getRPM());
+        telemetry.addData("turret position", turret.getCurrentAngle());
 
         //telemetry.addData("watts", intake.getCurrent() * voltageSensor.getVoltage());
         panelsTelemetry.addData("current rpm", outtake.getRPM());;

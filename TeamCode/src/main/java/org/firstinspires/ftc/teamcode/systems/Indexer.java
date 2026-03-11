@@ -19,28 +19,22 @@ public class Indexer {
 
     public Indexer(HardwareMap hardwareMap) {
         indexer = hardwareMap.get(DcMotorEx.class, "Indexer");
-        indexer.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        indexer.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         indexer.setDirection(DcMotorEx.Direction.FORWARD);
         indexer.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        indexer.setVelocityPIDFCoefficients(P, I, D, F);
     }
 
     public void pull() {
-        indexer.setVelocity(PULL_SPEED);
+        indexer.setPower(1);
     }
 
     public void push() {
-        indexer.setVelocity(-PUSH_SPEED);
+        indexer.setPower(-1);
     }
 
     public void off() {
-        indexer.setVelocity(0);
+        indexer.setPower(0);
     }
-
-    public double getRPM() {
-        double ticksPerSecond = indexer.getVelocity();
-        return (ticksPerSecond * 60.0) / TICKS_PER_REV;
+    public DcMotorEx getTurret(){
+        return indexer;
     }
 }
