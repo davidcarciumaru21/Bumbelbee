@@ -18,15 +18,13 @@ public class Deflector {
         deflector.setPosition(pose);
     }
 
-    //TODO
     public void moveAtAngleInDegrees(double angle) {
-        deflector.setPosition(MathUtils.clamp(0, 0.00, 1.00));
+        deflector.setPosition(MathUtils.clamp(0.0275 * angle - 0.35, 0.00, 1.00));
     }
 
-    //TODO
     public void moveAtAngleInRadians(double angle) {
         angle = Math.toDegrees(angle);
-        deflector.setPosition(MathUtils.clamp(0, 0.00, 1.00));
+        deflector.setPosition(MathUtils.clamp(0.0275 * angle - 0.35, 0.00, 1.00));
     }
 
     public void init(double startPose) {

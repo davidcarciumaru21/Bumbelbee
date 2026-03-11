@@ -15,6 +15,7 @@ public class Stopper {
 
     public void open() {
         stopper.setPosition(STOPPER_OPENED_POSITON);
+
     }
 
     public void close() {

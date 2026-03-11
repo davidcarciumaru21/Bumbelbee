@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.global;
 public final class SystemsConstants {
 
     public static final class StopperConstants {
-        public static final double STOPPER_OPENED_POSITON = 0.1;
+        public static final double STOPPER_OPENED_POSITON = 0.425;
         public static final double STOPPER_CLOSED_POSITON = 0.2;
         public static final double TIME_TO_OPEN = 200;
         public static final double TIME_TO_CLOSE = 200;
@@ -13,6 +13,15 @@ public final class SystemsConstants {
         public static final double PULL_POWER = 1.0;
         public static final double PUSH_POWER = -1.0;
         public static final double INTAKE_STALL_CURRENT = 5.0;
+    }
+
+    public static final class IndexerConstants {
+        public static final double PULL_SPEED = 2595;
+        public static final double PUSH_SPEED = -2595;
+        public static final double P = 0.0;
+        public static final double I = 0.0;
+        public static final double D = 0.0;
+        public static final double F = 12.0;
     }
 
     public static final class DeflectorConstants {

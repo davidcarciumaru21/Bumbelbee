@@ -35,7 +35,7 @@ public class ManualRobotTeleOp extends OpMode {
     private Stopper stopper;
     private Indexer indexer;
 
-    private double rpm = 0.0, pose = 0.0;
+    private double rpm = 0.0, pose = 0.2;
 
     private ElapsedTime timer;
 
@@ -65,6 +65,11 @@ public class ManualRobotTeleOp extends OpMode {
         backRightMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+    }
+
+    @Override
+    public void start() {
+        stopper.close();
     }
 
     @Override
@@ -107,13 +112,16 @@ public class ManualRobotTeleOp extends OpMode {
             indexer.off();
             stopper.close();
         }
+
+        if (gamepad1.dpadRightWasPressed()) deflector.move(pose += 0.01);
+        else if (gamepad1.dpadLeftWasPressed()) deflector.move(pose -= 0.01);
+
         timer.reset();
 
         telemetry.addData("rpm", rpm);
         telemetry.addData("pose", pose);
         telemetry.addData("outtake speed", outtake.getRPM());
-        telemetry.addData("intake speed", indexer.getSpeed());
-        telemetry.update();
+        telemetry.addData("indexer speed", indexer.getRPM());
 
         //telemetry.addData("watts", intake.getCurrent() * voltageSensor.getVoltage());
         panelsTelemetry.addData("current rpm", outtake.getRPM());;

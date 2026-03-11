@@ -50,7 +50,7 @@ public class Outtake {
     //TODO
     public void moveBallAtInchesPerSeconds(double speed) {
 
-        targetRPM = 0;
+        targetRPM = 2000;
     }
 
     public void moveFlyWheelAtRPM(double rpm) {

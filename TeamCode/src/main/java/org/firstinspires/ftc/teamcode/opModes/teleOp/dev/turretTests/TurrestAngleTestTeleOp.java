@@ -19,7 +19,7 @@ public class TurrestAngleTestTeleOp extends OpMode {
         if (gamepad1.dpadUpWasPressed()) targetAngle += 5;
         else if (gamepad1.dpadDownWasPressed()) targetAngle -= 5;
 
-        turret.setTargetAngleDegrees(targetAngle);
+        turret.setTargetAngle(targetAngle);
 
         telemetry.addData("targetAngle", targetAngle);
         telemetry.update();

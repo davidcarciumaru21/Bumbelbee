@@ -79,18 +79,18 @@ public class Constants {
             .useBrakeModeInTeleOp(true);
 
     public static ThreeWheelIMUConstants localizerConstants = new ThreeWheelIMUConstants()
-            .forwardTicksToInches(-0.0020159185)
-            .strafeTicksToInches(-0.0019831135)
-            .turnTicksToInches(0.001963445)
-            .leftPodY(5.2755905511811023622047244094488)
-            .rightPodY(-5.2755905511811023622047244094488)
-            .strafePodX(-2.9330708661417322834645669291339)
-            .leftEncoder_HardwareMapName("Intake")
-            .rightEncoder_HardwareMapName("FrontLeft")
+            .forwardTicksToInches(-0.001966)
+            .strafeTicksToInches(-0.001988)
+            .turnTicksToInches(-0.001996)
+            .leftPodY(4.25)
+            .rightPodY(-4.25)
+            .strafePodX(2.93)
+            .leftEncoder_HardwareMapName("FrontLeft")
+            .rightEncoder_HardwareMapName("Intake")
             .strafeEncoder_HardwareMapName("BackLeft")
             .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.FORWARD)
-            .strafeEncoderDirection(Encoder.FORWARD)
+            .strafeEncoderDirection(Encoder.REVERSE)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
