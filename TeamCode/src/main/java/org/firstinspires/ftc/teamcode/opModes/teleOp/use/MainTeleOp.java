@@ -50,7 +50,7 @@ public class MainTeleOp extends OpMode {
 
     private IntakingManager intakingManager;
     private ShootingManager shootingManager;
-
+    double error;
     private ElapsedTime timer;
     private ElapsedTime cameraTimer;
 
@@ -90,7 +90,7 @@ public class MainTeleOp extends OpMode {
             follower.setStartingPose(new Pose(18.392523364485978, 120, Math.toRadians(-37)));
 
         }
-        follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
+        //follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
         follower.update();
         imuOffset = Math.toDegrees(follower.getPose().getHeading());
 
@@ -152,7 +152,7 @@ public class MainTeleOp extends OpMode {
         else gamepad1Coef = 1.0;
 
         forward = -gamepad1.left_stick_y * gamepad1Coef;
-        strafe = gamepad1.left_stick_x * gamepad1Coef;
+        strafe = -gamepad1.left_stick_x * gamepad1Coef;
         rotation = -
                 gamepad1.right_stick_x * gamepad1Coef;
 
@@ -178,7 +178,7 @@ public class MainTeleOp extends OpMode {
         if(gamepad1.aWasPressed()) turretAim = !turretAim;
 
         follower.update();
-        if(turretAim){
+
             double targetHeading = Math.atan2(
                     Poses.blueGoalPose.getY() - follower.getPose().getY(),
                     Poses.blueGoalPose.getX() - follower.getPose().getX()
@@ -186,14 +186,11 @@ public class MainTeleOp extends OpMode {
 
             double currentHeading = follower.getPose().getHeading();
 
-            double error = targetHeading - currentHeading;
+            error = targetHeading - currentHeading;
+            turret.setTargetAngle(Math.toDegrees(-error));
 
-            while (error > Math.PI)  error -= 2 * Math.PI;
-            while (error < -Math.PI) error += 2 * Math.PI;
 
-            double kP = 1.1;
-            turret.setTargetAngle(Math.toDegrees(error));
-        }
+
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.redGoalPose),
@@ -209,6 +206,8 @@ public class MainTeleOp extends OpMode {
                     Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
             );
         }
+
+
 
         /*
         telemetry.addData("distance", visualManager.getDistance());
@@ -240,12 +239,14 @@ public class MainTeleOp extends OpMode {
             follower.setPose(visionPose);
             telemetry.update();
         }
-
+        telemetry.addData("error", Math.toDegrees(error));
         telemetry.addData("angle from imu", continuousHeading + imuOffset);
         telemetry.addData("curent pose x", follower.getPose().getX());
         telemetry.addData("curent pose y", follower.getPose().getY());
         telemetry.addData("curent pose h", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
+        telemetry.addData("rpm", outtake.getRPM());
+        telemetry.addData("angle", deflector.getPose());
 
         telemetry.update();
     }

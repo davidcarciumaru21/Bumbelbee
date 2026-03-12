@@ -90,7 +90,7 @@ public class Constants {
             .strafeEncoder_HardwareMapName("BackLeft")
             .leftEncoderDirection(Encoder.FORWARD)
             .rightEncoderDirection(Encoder.FORWARD)
-            .strafeEncoderDirection(Encoder.REVERSE)
+            .strafeEncoderDirection(Encoder.FORWARD)
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP));
 

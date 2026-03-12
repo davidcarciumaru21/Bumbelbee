@@ -121,7 +121,8 @@ public class ManualRobotTeleOp extends OpMode {
         else if (gamepad1.dpadLeftWasPressed()) deflector.move(pose -= 0.01);
 
         timer.reset();
-
+        turret.update();
+        turret.setTargetAngle(0);
         telemetry.addData("rpm", rpm);
         telemetry.addData("pose", pose);
         telemetry.addData("outtake speed", outtake.getRPM());

@@ -13,6 +13,8 @@ import static org.firstinspires.ftc.teamcode.global.SystemsConstants.OuttakeCons
 import static org.firstinspires.ftc.teamcode.global.SystemsConstants.OuttakeConstants.KS;
 import static org.firstinspires.ftc.teamcode.global.SystemsConstants.OuttakeConstants.KV;
 
+import org.opencv.core.Mat;
+
 public class Outtake {
 
     private final DcMotorEx outtakeMotor1;
@@ -46,11 +48,8 @@ public class Outtake {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
-
-    //TODO
     public void moveBallAtInchesPerSeconds(double speed) {
-
-        targetRPM = 2000;
+        targetRPM = 2.4373 * Math.pow(speed, 1.17405);
     }
 
     public void moveFlyWheelAtRPM(double rpm) {
