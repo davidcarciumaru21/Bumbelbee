@@ -23,6 +23,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.File;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.systems.StaticTurret;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 
@@ -64,7 +65,8 @@ public class BlueGoalAuto extends OpMode {
     private Indexer indexer;
     private Deflector deflector;
     private Outtake outtake;
-    private Turret turret;
+    //private Turret turret;
+    private StaticTurret turret;
     private Stopper stopper;
 
     private ShootingManager shootingManager;
@@ -225,7 +227,7 @@ public class BlueGoalAuto extends OpMode {
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
                     shootingManager.shoot(1);
-                    setPathState(States.END);
+                    setPathState(States.SHOOT_PRELAOD_TO_INTAKE_LINE1);
                 }
                 break;
 
@@ -233,7 +235,7 @@ public class BlueGoalAuto extends OpMode {
                 if (!follower.isBusy() && !shootingManager.isBusy()) {
                     shootingManager.shoot(2);
                     follower.followPath(paths.Path2);
-                    setPathState(States.INTAKE_LINE1_TO_FINISHED_INTAKE_LINE1);
+                    setPathState(States.END);
                 }
                 break;
 
@@ -369,7 +371,8 @@ public class BlueGoalAuto extends OpMode {
 
         intake = new Intake(hardwareMap);
         indexer = new Indexer(hardwareMap);
-        turret = new Turret(hardwareMap, indexer.getTurret());
+        //turret = new Turret(hardwareMap, indexer.getTurret());
+        turret = new StaticTurret(hardwareMap);
         deflector = new Deflector(hardwareMap);
         outtake = new Outtake(hardwareMap);
         stopper = new Stopper(hardwareMap);
@@ -390,8 +393,9 @@ public class BlueGoalAuto extends OpMode {
 
     @Override
     public void loop() {
-        turret.update();
-        turret.setTargetAngle(Math.toDegrees(0));
+        turret.stuck();
+        //turret.update();
+        //turret.setTargetAngle(Math.toDegrees(0));
         follower.update();
         shootingManager.update(
                 follower.getPose().distanceFrom(Poses.blueGoalPose),

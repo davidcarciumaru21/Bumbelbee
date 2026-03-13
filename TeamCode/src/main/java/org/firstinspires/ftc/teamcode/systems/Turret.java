@@ -24,6 +24,8 @@ public class Turret {
 
     private double lastError;
     private long lastTime;
+    public double deltaAngle = 0.0;
+    public double interpolatorTurret = 0.0;
 
     private static final double TICKS_PER_REV = 8192.0;
 
@@ -52,7 +54,15 @@ public class Turret {
         if (angle < -120) angle = -120;
         else if (angle > 120) angle = 120;
 
+        deltaAngle = angle - getCurrentAngle();
+        final double brakeDistance = 90;
+        interpolatorTurret = deltaAngle / brakeDistance;
 
+        if (Math.abs(interpolatorTurret) > 1) interpolatorTurret = interpolatorTurret / Math.abs(interpolatorTurret);
+        double speedTurret = teoXSqrd(interpolatorTurret, 0.1);
+
+        if (Math.abs(deltaAngle) < 1) turret.setPower(0.0);
+        else turret.setPower(-speedTurret);
     }
 
     public void setTargetAngle(double angle) {
@@ -92,7 +102,7 @@ public class Turret {
 
         if (Math.abs(error) < 1) power = 0;
 
-        turret.setPower(-power);
+        //turret.setPower(-power);
 
         lastError = error;
     }

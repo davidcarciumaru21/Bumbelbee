@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opModes.auto.templates;
+package org.firstinspires.ftc.teamcode.opModes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -53,7 +53,7 @@ public class RedGoalAuto extends OpMode {
     private Indexer indexer;
     private Deflector deflector;
     private Outtake outtake;
-    private Turret turret;
+    //private Turret turret;
     private Stopper stopper;
 
     private ShootingManager shootingManager;
@@ -238,7 +238,7 @@ public class RedGoalAuto extends OpMode {
         stopper = new Stopper(hardwareMap);
         outtake = new Outtake(hardwareMap);
         indexer = new Indexer(hardwareMap);
-        turret = new Turret(hardwareMap, indexer.getTurret());
+        //turret = new Turret(hardwareMap, indexer.getTurret());
         intake = new Intake(hardwareMap);
 
 
@@ -259,8 +259,8 @@ public class RedGoalAuto extends OpMode {
 
     @Override
     public void loop() {
-        turret.update();
-        turret.setTargetAngle(0);
+        //turret.update();
+        //turret.setTargetAngle(0);
         follower.update();
         shootingManager.update(
                 follower.getPose().distanceFrom(Poses.redGoalPose),

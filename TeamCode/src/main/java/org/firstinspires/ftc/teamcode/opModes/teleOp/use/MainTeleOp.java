@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.Objects;
 
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
+import org.firstinspires.ftc.teamcode.systems.StaticTurret;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
 import org.firstinspires.ftc.teamcode.systems.Turret;
 
@@ -39,8 +40,10 @@ public class MainTeleOp extends OpMode {
     private Indexer indexer;
     private Deflector deflector;
     private Outtake outtake;
-    private Turret turret;
+    //private Turret turret;
     private Stopper stopper;
+
+    private StaticTurret turret;
 
     private IMU imu;
     private double imuOffset;
@@ -87,7 +90,7 @@ public class MainTeleOp extends OpMode {
 
             follower.setStartingPose(new Pose (startPoseX, startPoseY, startPoseHeading));
         } catch (IOException e) {
-            follower.setStartingPose(new Pose(18.392523364485978, 120, Math.toRadians(-37)));
+            //follower.setStartingPose(new Pose(18.392523364485978, 120, Math.toRadians(-37)));
 
         }
         //follower.setStartingPose(new Pose(72, 72, Math.toRadians(90)));
@@ -96,7 +99,8 @@ public class MainTeleOp extends OpMode {
 
         intake = new Intake(hardwareMap);
         indexer = new Indexer(hardwareMap);
-        turret = new Turret(hardwareMap, indexer.getTurret());
+        //turret = new Turret(hardwareMap, indexer.getTurret());
+        turret = new StaticTurret(hardwareMap);
         deflector = new Deflector(hardwareMap);
         outtake = new Outtake(hardwareMap);
         stopper = new Stopper(hardwareMap);
@@ -126,7 +130,8 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        turret.update();
+        //turret.update();
+        turret.stuck();
         double currentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         double delta = currentYaw - lastImuYaw;
@@ -172,9 +177,14 @@ public class MainTeleOp extends OpMode {
             );
         }
 
-        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot();
-        if (gamepad1.xWasPressed()) intakingManager.togglePull();
-        if (gamepad1.yWasPressed()) intakingManager.reverse();
+        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
+        if(gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
+        if(gamepad1.right_trigger > 0.1){
+            intakingManager.pull();
+        }
+        else{
+            intakingManager.off();
+        }
         if(gamepad1.aWasPressed()) turretAim = !turretAim;
 
         follower.update();
@@ -187,7 +197,7 @@ public class MainTeleOp extends OpMode {
             double currentHeading = follower.getPose().getHeading();
 
             error = targetHeading - currentHeading;
-            turret.setTargetAngle(Math.toDegrees(-error));
+           // turret.setTurretDegrees(Math.toDegrees(-error));
 
         /*
 
@@ -207,7 +217,7 @@ public class MainTeleOp extends OpMode {
             );
         }
         */
-         
+
 
         shootingManager.update(
                 follower.getPose().distanceFrom(Poses.blueGoalPose),
@@ -246,15 +256,27 @@ public class MainTeleOp extends OpMode {
             follower.setPose(visionPose);
             telemetry.update();
         }
+
         telemetry.addData("error", Math.toDegrees(error));
+        /*
         telemetry.addData("angle from imu", continuousHeading + imuOffset);
         telemetry.addData("curent pose x", follower.getPose().getX());
         telemetry.addData("curent pose y", follower.getPose().getY());
         telemetry.addData("curent pose h", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
-        telemetry.addData("rpm", outtake.getRPM());
-        telemetry.addData("angle", deflector.getPose());
 
+         */
+        telemetry.addData("rpm", outtake.getRPM());
+
+
+        telemetry.addData("angle deflector", deflector.getPose());
+
+        /*telemetry.addData("target angle", Math.toDegrees(-error));
+        telemetry.addData("delta", turret.deltaAngle);
+        telemetry.addData("interpolator", turret.interpolatorTurret);
+        telemetry.addData("current angle", turret.getCurrentAngle());
+
+         */
         telemetry.update();
     }
 
