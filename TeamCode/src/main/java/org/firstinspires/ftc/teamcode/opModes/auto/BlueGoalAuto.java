@@ -224,13 +224,14 @@ public class BlueGoalAuto extends OpMode {
 
             case SHOOT_PRELOAD:
                 if (!follower.isBusy()) {
-                    shootingManager.shoot();
+                    shootingManager.shoot(1);
                     setPathState(States.END);
                 }
                 break;
 
             case SHOOT_PRELAOD_TO_INTAKE_LINE1:
                 if (!follower.isBusy() && !shootingManager.isBusy()) {
+                    shootingManager.shoot(2);
                     follower.followPath(paths.Path2);
                     setPathState(States.INTAKE_LINE1_TO_FINISHED_INTAKE_LINE1);
                 }
@@ -267,13 +268,14 @@ public class BlueGoalAuto extends OpMode {
 
             case SHOOT_LINE1:
                 if (!follower.isBusy()) {
-                    shootingManager.shoot();
+                    shootingManager.shoot(1);
                     setPathState(States.SHOOT_LINE1_TO_INTAKE_LINE2);
                 }
                 break;
 
             case SHOOT_LINE1_TO_INTAKE_LINE2:
                 if (!follower.isBusy() && !shootingManager.isBusy()) {
+                    shootingManager.shoot(2);
                     follower.followPath(paths.Path6);
                     setPathState(States.INTAKE_LINE2_TO_FINISHED_INTAKE_LINE2);
                 }
@@ -303,13 +305,14 @@ public class BlueGoalAuto extends OpMode {
 
             case SHOOT_LINE2:
                 if (!follower.isBusy()) {
-                    shootingManager.shoot();
+                    shootingManager.shoot(1);
                     setPathState(States.SHOOT_LINE2_TO_INTAKE_LINE3);
                 }
                 break;
 
             case SHOOT_LINE2_TO_INTAKE_LINE3:
                 if (!follower.isBusy() && !shootingManager.isBusy()) {
+                    shootingManager.shoot(2);
                     follower.followPath(paths.Path9);
                     setPathState(States.INTAKE_LINE3_TO_FINISHED_INTAKE_LINE3);
                 }
@@ -339,12 +342,13 @@ public class BlueGoalAuto extends OpMode {
 
             case SHOOT_LINE3:
                 if (!follower.isBusy()) {
-                    shootingManager.shoot();
+                    shootingManager.shoot(1);
                     setPathState(States.END);
                 }
                 break;
 
             case END:
+                shootingManager.shoot(2);
                 break;
         }
     }

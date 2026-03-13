@@ -11,11 +11,18 @@ public class Turret {
 
     private double targetAngle;
 
-    double kP = 0.005;
-    double kD = 0.00001;
+    // BIG ERROR PID (your current one)
+    double kP_big = 0.008;
+    double kD_big = 0.00001;
+
+    // SMALL ERROR PID (precision PID)
+    double kP_small = 0.02;
+    double kD_small = 0.0002;
+
+    // threshold between them
+    double switchThreshold = 15; // degrees
 
     private double lastError;
-
     private long lastTime;
 
     private static final double TICKS_PER_REV = 8192.0;
@@ -30,12 +37,27 @@ public class Turret {
         lastTime = System.nanoTime();
     }
 
+    public double teoXSqrd(double x, double vMin) {
+        if (x == 0) return 0;
+
+        double speed = 1.55 * x * x;
+        double sign = x / Math.abs(x);
+
+        if (vMin > Math.abs(speed)) return vMin * sign;
+        else if (Math.abs(speed) > 1) return sign;
+        else return speed * sign;
+    }
+
+    public void setTurretDegrees(double angle) {
+        if (angle < -120) angle = -120;
+        else if (angle > 120) angle = 120;
+
+
+    }
+
     public void setTargetAngle(double angle) {
-        if(angle > -120 && angle < 120) {
+        if (angle > -120 && angle < 120) {
             targetAngle = angle;
-        }
-        else{
-            targetAngle = 0;
         }
     }
 
@@ -46,25 +68,29 @@ public class Turret {
     public void update() {
 
         long now = System.nanoTime();
-        double dt = (now - lastTime) / 1e9; // seconds
+        double dt = (now - lastTime) / 1e9;
         lastTime = now;
 
         double current = getCurrentAngle();
-
-        double error = targetAngle - current - 7;
+        double error = targetAngle - current;
 
         if (error > 180) error -= 360;
         if (error < -180) error += 360;
 
         double derivative = (error - lastError) / dt;
 
-        double power = kP * error + kD * derivative;
+        double power;
+
+        // choose which PID to use
+        if (Math.abs(error) > switchThreshold) {
+            power = kP_big * error + kD_big * derivative;
+        } else {
+            power = kP_small * error + kD_small * derivative;
+        }
 
         power = Math.max(-1, Math.min(1, power));
 
         if (Math.abs(error) < 1) power = 0;
-
-
 
         turret.setPower(-power);
 

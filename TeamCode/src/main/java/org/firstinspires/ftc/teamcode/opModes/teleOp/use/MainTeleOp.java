@@ -32,6 +32,7 @@ import java.util.Objects;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
 import org.firstinspires.ftc.teamcode.systems.Turret;
+import org.opencv.core.Mat;
 
 @TeleOp(name = "MainTeleOp", group = "use")
 public class MainTeleOp extends OpMode {
@@ -43,6 +44,7 @@ public class MainTeleOp extends OpMode {
     private Turret turret;
     private Stopper stopper;
     private VoltageSensor voltageSensor;
+    private boolean emergency = false;
 
     private IMU imu;
     private double imuOffset;
@@ -175,22 +177,42 @@ public class MainTeleOp extends OpMode {
             );
         }
 
-        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot();
-        if (gamepad1.xWasPressed()) intakingManager.togglePull();
-        if (gamepad1.yWasPressed()) intakingManager.reverse();
-        if(gamepad1.aWasPressed()) turretAim = !turretAim;
+        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
+        if (gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
+        if(gamepad1.dpadUpWasPressed()) emergency = ! emergency;
+        if(emergency){
+            error = 0;
+            turret.setTargetAngle(Math.toDegrees(-error));
+        }
+
+
+        if(gamepad1.left_trigger > 0.1 && !gamepad1.yWasPressed()){
+            intakingManager.pull();
+        }
+        else if(gamepad1.left_trigger < 0.1 && gamepad1.yWasPressed()){
+            intakingManager.reverse();
+        }
+        else{
+            intakingManager.off();
+        }
 
         follower.update();
 
             double targetHeading = Math.atan2(
-                    Poses.blueGoalPose.getY() - follower.getPose().getY(),
-                    Poses.blueGoalPose.getX() - follower.getPose().getX()
+                    Poses.redGoalPose.getY() - follower.getPose().getY(),
+                    Poses.redGoalPose.getX() - follower.getPose().getX()
             );
 
             double currentHeading = follower.getPose().getHeading();
 
             error = targetHeading - currentHeading;
-            turret.setTargetAngle(Math.toDegrees(-error));
+            if(Math.toDegrees(error) > 360){
+                error = Math.toRadians(Math.toDegrees(error) - ((int)(Math.toDegrees(error) / 360) * 360));
+            }
+            else if(Math.toDegrees(error) < -360){
+                error = Math.toRadians(Math.toDegrees(error) + ((int)(Math.toDegrees(error) / -360) * 360));
+            }
+
         /*
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
@@ -209,10 +231,10 @@ public class MainTeleOp extends OpMode {
         }
         */
         shootingManager.update(
-                follower.getPose().distanceFrom(Poses.blueGoalPose),
+                follower.getPose().distanceFrom(Poses.redGoalPose),
                 timer.seconds(),
                 follower.poseTracker.getVelocity(),
-                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
+                Math.atan2((Poses.redGoalPose.getY() - follower.getPose().getY()), (Poses.redGoalPose.getX() - follower.getPose().getX()))
         );
 
         /*
@@ -261,6 +283,7 @@ public class MainTeleOp extends OpMode {
         if(voltageSensor.getVoltage() * intake.getCurrent() > 48){
             intakingManager.off();
         }
+        telemetry.addData("error", error);
         telemetry.addData("current", voltageSensor.getVoltage() * intake.getCurrent());
 
         telemetry.update();

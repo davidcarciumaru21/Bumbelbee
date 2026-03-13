@@ -28,7 +28,7 @@ public class ShootingManager {
     private final Indexer indexer;
 
     private final IntakingManager intakingManager;
-
+    private boolean shooting = false;
     private enum State {
         IDLE,
         RAISE_STOPPER,
@@ -64,9 +64,20 @@ public class ShootingManager {
         currentState = state;
     }
 
-    public void shoot() {
-        if (currentState == State.IDLE) {
-            setState(State.RAISE_STOPPER);
+    public void shoot(int button) {
+        if(button == 1) {
+            shooting = true;
+        }
+        else if(button == 2){
+            shooting = false;
+        }
+        if(shooting) {
+            if (currentState == State.IDLE) {
+                setState(State.RAISE_STOPPER);
+            }
+        }
+        else{
+            setState(State.PULL_STOPER);
         }
     }
 
@@ -179,7 +190,7 @@ public class ShootingManager {
             case SHOOT:
                 intakingManager.shootPull();
                 indexer.pull();
-                if (timer.milliseconds() > THREE_BALLS_TIME) setState(State.PULL_STOPER);
+                //if (timer.milliseconds() > THREE_BALLS_TIME) setState(State.PULL_STOPER);
 
                 break;
 

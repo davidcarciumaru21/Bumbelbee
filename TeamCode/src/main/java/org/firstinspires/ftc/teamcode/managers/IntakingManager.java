@@ -28,6 +28,11 @@ public class IntakingManager {
         currentState = (currentState == State.PULL) ? State.IDLE : State.PULL;
         timer.reset();
     }
+    public void pull(){
+        if(currentState == State.IDLE){
+            currentState = State.PULL;
+        }
+    }
 
     public void reverse(){
         currentState = State.REVERSE;

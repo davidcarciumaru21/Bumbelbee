@@ -49,7 +49,7 @@ public class Outtake {
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
     public void moveBallAtInchesPerSeconds(double speed) {
-        targetRPM = 2.4373 * Math.pow(speed, 1.17405);
+        targetRPM = 10.446 * speed + 198.20486;
     }
 
     public void moveFlyWheelAtRPM(double rpm) {
