@@ -6,6 +6,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -41,6 +42,7 @@ public class MainTeleOp extends OpMode {
     private Outtake outtake;
     private Turret turret;
     private Stopper stopper;
+    private VoltageSensor voltageSensor;
 
     private IMU imu;
     private double imuOffset;
@@ -68,6 +70,7 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
@@ -188,9 +191,7 @@ public class MainTeleOp extends OpMode {
 
             error = targetHeading - currentHeading;
             turret.setTargetAngle(Math.toDegrees(-error));
-
-
-
+        /*
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.redGoalPose),
@@ -206,8 +207,13 @@ public class MainTeleOp extends OpMode {
                     Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
             );
         }
-
-
+        */
+        shootingManager.update(
+                follower.getPose().distanceFrom(Poses.blueGoalPose),
+                timer.seconds(),
+                follower.poseTracker.getVelocity(),
+                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
+        );
 
         /*
         telemetry.addData("distance", visualManager.getDistance());
@@ -226,6 +232,8 @@ public class MainTeleOp extends OpMode {
             isRelocalizing = true;
         }
 
+
+
         if (visionPose != null && isRelocalizing) {
             visionPose.setHeading(Math.toRadians(continuousHeading + imuOffset));
             /*
@@ -239,6 +247,8 @@ public class MainTeleOp extends OpMode {
             follower.setPose(visionPose);
             telemetry.update();
         }
+        /*
+        telemetry.addData("targetrpm", outtake.getTargetRPM());
         telemetry.addData("error", Math.toDegrees(error));
         telemetry.addData("angle from imu", continuousHeading + imuOffset);
         telemetry.addData("curent pose x", follower.getPose().getX());
@@ -247,6 +257,11 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
         telemetry.addData("rpm", outtake.getRPM());
         telemetry.addData("angle", deflector.getPose());
+        */
+        if(voltageSensor.getVoltage() * intake.getCurrent() > 48){
+            intakingManager.off();
+        }
+        telemetry.addData("current", voltageSensor.getVoltage() * intake.getCurrent());
 
         telemetry.update();
     }
