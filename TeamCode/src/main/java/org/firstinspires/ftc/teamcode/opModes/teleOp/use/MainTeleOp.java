@@ -6,7 +6,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -32,7 +31,6 @@ import java.util.Objects;
 import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
 import org.firstinspires.ftc.teamcode.systems.Stopper;
 import org.firstinspires.ftc.teamcode.systems.Turret;
-import org.opencv.core.Mat;
 
 @TeleOp(name = "MainTeleOp", group = "use")
 public class MainTeleOp extends OpMode {
@@ -43,8 +41,6 @@ public class MainTeleOp extends OpMode {
     private Outtake outtake;
     private Turret turret;
     private Stopper stopper;
-    private VoltageSensor voltageSensor;
-    private boolean emergency = false;
 
     private IMU imu;
     private double imuOffset;
@@ -72,7 +68,6 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void init() {
-        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         imu = hardwareMap.get(IMU.class, "imu");
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
@@ -177,43 +172,25 @@ public class MainTeleOp extends OpMode {
             );
         }
 
-        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
-        if (gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
-        if(gamepad1.dpadUpWasPressed()) emergency = ! emergency;
-        if(emergency){
-            error = 0;
-            turret.setTargetAngle(Math.toDegrees(-error));
-        }
-
-
-        if(gamepad1.left_trigger > 0.1 && !gamepad1.yWasPressed()){
-            intakingManager.pull();
-        }
-        else if(gamepad1.left_trigger < 0.1 && gamepad1.yWasPressed()){
-            intakingManager.reverse();
-        }
-        else{
-            intakingManager.off();
-        }
+        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot();
+        if (gamepad1.xWasPressed()) intakingManager.togglePull();
+        if (gamepad1.yWasPressed()) intakingManager.reverse();
+        if(gamepad1.aWasPressed()) turretAim = !turretAim;
 
         follower.update();
 
             double targetHeading = Math.atan2(
-                    Poses.redGoalPose.getY() - follower.getPose().getY(),
-                    Poses.redGoalPose.getX() - follower.getPose().getX()
+                    Poses.blueGoalPose.getY() - follower.getPose().getY(),
+                    Poses.blueGoalPose.getX() - follower.getPose().getX()
             );
 
             double currentHeading = follower.getPose().getHeading();
 
             error = targetHeading - currentHeading;
-            if(Math.toDegrees(error) > 360){
-                error = Math.toRadians(Math.toDegrees(error) - ((int)(Math.toDegrees(error) / 360) * 360));
-            }
-            else if(Math.toDegrees(error) < -360){
-                error = Math.toRadians(Math.toDegrees(error) + ((int)(Math.toDegrees(error) / -360) * 360));
-            }
+            turret.setTargetAngle(Math.toDegrees(-error));
 
         /*
+
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.redGoalPose),
@@ -230,11 +207,13 @@ public class MainTeleOp extends OpMode {
             );
         }
         */
+         
+
         shootingManager.update(
-                follower.getPose().distanceFrom(Poses.redGoalPose),
+                follower.getPose().distanceFrom(Poses.blueGoalPose),
                 timer.seconds(),
                 follower.poseTracker.getVelocity(),
-                Math.atan2((Poses.redGoalPose.getY() - follower.getPose().getY()), (Poses.redGoalPose.getX() - follower.getPose().getX()))
+                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
         );
 
         /*
@@ -254,8 +233,6 @@ public class MainTeleOp extends OpMode {
             isRelocalizing = true;
         }
 
-
-
         if (visionPose != null && isRelocalizing) {
             visionPose.setHeading(Math.toRadians(continuousHeading + imuOffset));
             /*
@@ -269,8 +246,6 @@ public class MainTeleOp extends OpMode {
             follower.setPose(visionPose);
             telemetry.update();
         }
-        /*
-        telemetry.addData("targetrpm", outtake.getTargetRPM());
         telemetry.addData("error", Math.toDegrees(error));
         telemetry.addData("angle from imu", continuousHeading + imuOffset);
         telemetry.addData("curent pose x", follower.getPose().getX());
@@ -279,12 +254,6 @@ public class MainTeleOp extends OpMode {
         telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
         telemetry.addData("rpm", outtake.getRPM());
         telemetry.addData("angle", deflector.getPose());
-        */
-        if(voltageSensor.getVoltage() * intake.getCurrent() > 48){
-            intakingManager.off();
-        }
-        telemetry.addData("error", error);
-        telemetry.addData("current", voltageSensor.getVoltage() * intake.getCurrent());
 
         telemetry.update();
     }
