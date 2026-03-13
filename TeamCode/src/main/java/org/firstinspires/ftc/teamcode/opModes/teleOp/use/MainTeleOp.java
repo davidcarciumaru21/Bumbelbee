@@ -189,7 +189,7 @@ public class MainTeleOp extends OpMode {
             error = targetHeading - currentHeading;
             turret.setTargetAngle(Math.toDegrees(-error));
 
-
+        /*
 
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
@@ -206,8 +206,15 @@ public class MainTeleOp extends OpMode {
                     Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
             );
         }
+        */
+         
 
-
+        shootingManager.update(
+                follower.getPose().distanceFrom(Poses.blueGoalPose),
+                timer.seconds(),
+                follower.poseTracker.getVelocity(),
+                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
+        );
 
         /*
         telemetry.addData("distance", visualManager.getDistance());

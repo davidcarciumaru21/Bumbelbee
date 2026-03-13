@@ -84,7 +84,7 @@ public class Constants {
             .turnTicksToInches(-0.001996)
             .leftPodY(4.25)
             .rightPodY(-4.25)
-            .strafePodX(2.93)
+            .strafePodX(-2.93)
             .leftEncoder_HardwareMapName("FrontLeft")
             .rightEncoder_HardwareMapName("Intake")
             .strafeEncoder_HardwareMapName("BackLeft")
