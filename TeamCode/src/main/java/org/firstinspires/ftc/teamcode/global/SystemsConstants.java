@@ -30,10 +30,10 @@ public final class SystemsConstants {
     }
 
     public static final class OuttakeConstants {
-        public static double KP = 0.09;
+        public static double KP = 0.1;
         public static double KI = 0.0;
         public static double KS = 0.61;
-        public static double KV = 0.0021;
+        public static double KV = 0.0022;
     }
 
     public static final class TurretConstants {

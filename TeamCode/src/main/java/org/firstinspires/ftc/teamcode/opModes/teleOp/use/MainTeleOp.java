@@ -132,6 +132,8 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
+        double dt = timer.seconds();
+        timer.reset();
         double currentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         double delta = currentYaw - lastImuYaw;
@@ -158,8 +160,7 @@ public class MainTeleOp extends OpMode {
 
         forward = -gamepad1.left_stick_y * gamepad1Coef;
         strafe = -gamepad1.left_stick_x * gamepad1Coef;
-        rotation = -
-                gamepad1.right_stick_x * gamepad1Coef;
+        rotation = -gamepad1.right_stick_x * gamepad1Coef;
 
         if (drivingTypeGm1 == DrivingType.ROBOT_CENTRIC) {
             follower.setTeleOpDrive(
@@ -210,14 +211,14 @@ public class MainTeleOp extends OpMode {
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.redGoalPose),
-                    timer.seconds(),
+                    dt,
                     follower.poseTracker.getVelocity(),
                     Math.atan2((Poses.redGoalPose.getY() - follower.getPose().getY()), (Poses.redGoalPose.getX() - follower.getPose().getX()))
             );
         } else if (allianceColor.equals(AllianceColor.BLUE.toString())) {
             shootingManager.update(
                     follower.getPose().distanceFrom(Poses.blueGoalPose),
-                    timer.seconds(),
+                    dt,
                     follower.poseTracker.getVelocity(),
                     Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
             );
@@ -242,7 +243,6 @@ public class MainTeleOp extends OpMode {
         */
 
         intakingManager.update();
-        timer.reset();
 
         Pose visionPose = limelight.getPose();
 
@@ -303,7 +303,6 @@ public class MainTeleOp extends OpMode {
 
         panelsTelemetry.update();
         telemetry.update();
-        timer.reset();
     }
 
     @Override
