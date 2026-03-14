@@ -209,7 +209,7 @@ public class MainTeleOp extends OpMode {
             else if(error < -360){
                 error = error + (-360 * (int)(error / 360));
             }
-            turret.setTurretDegrees(Math.toDegrees(-error));
+            turret.setTurretDegrees(-error);
 
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
