@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opModes.teleOp.use;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -40,10 +42,8 @@ public class MainTeleOp extends OpMode {
     private Indexer indexer;
     private Deflector deflector;
     private Outtake outtake;
-    //private Turret turret;
+    private Turret turret;
     private Stopper stopper;
-
-    private StaticTurret turret;
 
     private IMU imu;
     private double imuOffset;
@@ -68,6 +68,8 @@ public class MainTeleOp extends OpMode {
     private double gamepad1Coef = 1.0;
 
     private String allianceColor;
+
+    private TelemetryManager panelsTelemetry;
 
     @Override
     public void init() {
@@ -99,16 +101,14 @@ public class MainTeleOp extends OpMode {
 
         intake = new Intake(hardwareMap);
         indexer = new Indexer(hardwareMap);
-        //turret = new Turret(hardwareMap, indexer.getTurret());
-        turret = new StaticTurret(hardwareMap);
+        turret = new Turret(hardwareMap, indexer.getTurret());
         deflector = new Deflector(hardwareMap);
         outtake = new Outtake(hardwareMap);
         stopper = new Stopper(hardwareMap);
 
         if (allianceColor.equals(AllianceColor.BLUE.toString())) {
             limelight = new Limelight(hardwareMap, 0);
-        }
-        else {
+        } else {
             limelight = new Limelight(hardwareMap, 1);
         }
 
@@ -117,6 +117,8 @@ public class MainTeleOp extends OpMode {
 
         timer = new ElapsedTime();
         cameraTimer = new ElapsedTime();
+
+        panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
     @Override
@@ -130,8 +132,6 @@ public class MainTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        //turret.update();
-        turret.stuck();
         double currentYaw = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES);
 
         double delta = currentYaw - lastImuYaw;
@@ -189,17 +189,23 @@ public class MainTeleOp extends OpMode {
 
         follower.update();
 
-            double targetHeading = Math.atan2(
+        double targetHeading = 0.0;
+        if (allianceColor.equals(AllianceColor.BLUE.toString())) {
+            targetHeading = Math.atan2(
                     Poses.blueGoalPose.getY() - follower.getPose().getY(),
                     Poses.blueGoalPose.getX() - follower.getPose().getX()
             );
+        } else if (allianceColor.equals(AllianceColor.RED.toString())) {
+            targetHeading = Math.atan2(
+                    Poses.redGoalPose.getY() - follower.getPose().getY(),
+                    Poses.redGoalPose.getX() - follower.getPose().getX()
+            );
+        }
 
             double currentHeading = follower.getPose().getHeading();
 
             error = targetHeading - currentHeading;
-           // turret.setTurretDegrees(Math.toDegrees(-error));
-
-        /*
+            turret.setTurretDegrees(Math.toDegrees(-error));
 
         if (allianceColor.equals(AllianceColor.RED.toString())) {
             shootingManager.update(
@@ -216,15 +222,16 @@ public class MainTeleOp extends OpMode {
                     Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
             );
         }
-        */
 
-
+        /*
         shootingManager.update(
                 follower.getPose().distanceFrom(Poses.blueGoalPose),
                 timer.seconds(),
                 follower.poseTracker.getVelocity(),
                 Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
         );
+
+         */
 
         /*
         telemetry.addData("distance", visualManager.getDistance());
@@ -258,26 +265,45 @@ public class MainTeleOp extends OpMode {
         }
 
         telemetry.addData("error", Math.toDegrees(error));
-        /*
         telemetry.addData("angle from imu", continuousHeading + imuOffset);
         telemetry.addData("curent pose x", follower.getPose().getX());
         telemetry.addData("curent pose y", follower.getPose().getY());
         telemetry.addData("curent pose h", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
 
-         */
         telemetry.addData("rpm", outtake.getRPM());
 
 
-        telemetry.addData("angle deflector", deflector.getPose());
+        telemetry.addData("angle deflector", Math.toDegrees(shootingManager.getTargetAngleAndVelocity(follower.getPose().distanceFrom(Poses.blueGoalPose),
+                follower.poseTracker.getVelocity(),
+                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
+        ).first));
+        telemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
 
-        /*telemetry.addData("target angle", Math.toDegrees(-error));
+        panelsTelemetry.addData("rpm", outtake.getRPM());
+        panelsTelemetry.addData("angle deflector", Math.toDegrees(shootingManager.getTargetAngleAndVelocity(follower.getPose().distanceFrom(Poses.blueGoalPose),
+                follower.poseTracker.getVelocity(),
+                Math.atan2((Poses.blueGoalPose.getY() - follower.getPose().getY()), (Poses.blueGoalPose.getX() - follower.getPose().getX()))
+        ).first));
+
+        panelsTelemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
+
+        /*
+        telemetry.addData("target angle", Math.toDegrees(-error));
         telemetry.addData("delta", turret.deltaAngle);
         telemetry.addData("interpolator", turret.interpolatorTurret);
         telemetry.addData("current angle", turret.getCurrentAngle());
 
+        panelsTelemetry.addData("deltaAngle", turret.deltaAngle);
+        panelsTelemetry.addData("interpolation", turret.interpolatorTurret);
+        panelsTelemetry.addData("angle", turret.getCurrentAngle());
+        panelsTelemetry.addData("speed", turret.speedTurret);
+
          */
+
+        panelsTelemetry.update();
         telemetry.update();
+        timer.reset();
     }
 
     @Override

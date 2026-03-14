@@ -37,7 +37,7 @@ public class ManualRobotTeleOp extends OpMode {
     private Stopper stopper;
     private Indexer indexer;
 
-    private double rpm = 0.0, pose = 0.2;
+    private double rpm = 1400.0, pose = 0.2;
 
     private ElapsedTime timer;
 
@@ -121,8 +121,7 @@ public class ManualRobotTeleOp extends OpMode {
         else if (gamepad1.dpadLeftWasPressed()) deflector.move(pose -= 0.01);
 
         timer.reset();
-        turret.update();
-        turret.setTargetAngle(0);
+        turret.setTurretDegrees(0);
         telemetry.addData("rpm", rpm);
         telemetry.addData("pose", pose);
         telemetry.addData("outtake speed", outtake.getRPM());

@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.systems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
+@Configurable
 public class Turret {
 
     private CRServo turret;
@@ -11,26 +14,25 @@ public class Turret {
 
     private double targetAngle;
 
-    // BIG ERROR PID (your current one)
     double kP_big = 0.008;
     double kD_big = 0.00001;
 
-    // SMALL ERROR PID (precision PID)
     double kP_small = 0.02;
     double kD_small = 0.0002;
 
-    // threshold between them
-    double switchThreshold = 15; // degrees
+    double switchThreshold = 15;
 
     private double lastError;
     private long lastTime;
     public double deltaAngle = 0.0;
     public double interpolatorTurret = 0.0;
+    public double speedTurret = 0.0;
 
     private static final double TICKS_PER_REV = 8192.0;
 
     public Turret(HardwareMap hardwareMap, DcMotorEx turretE) {
         turret = hardwareMap.get(CRServo.class, "Turret");
+        turret.setDirection(CRServo.Direction.REVERSE);
         encoder = turretE;
 
         encoder.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
@@ -39,7 +41,7 @@ public class Turret {
         lastTime = System.nanoTime();
     }
 
-    public double teoXSqrd(double x, double vMin) {
+    public double twoXSqrd(double x, double vMin) {
         if (x == 0) return 0;
 
         double speed = 1.55 * x * x;
@@ -55,14 +57,14 @@ public class Turret {
         else if (angle > 120) angle = 120;
 
         deltaAngle = angle - getCurrentAngle();
-        final double brakeDistance = 90;
+        final double brakeDistance = 60;
         interpolatorTurret = deltaAngle / brakeDistance;
 
         if (Math.abs(interpolatorTurret) > 1) interpolatorTurret = interpolatorTurret / Math.abs(interpolatorTurret);
-        double speedTurret = teoXSqrd(interpolatorTurret, 0.1);
+        speedTurret = twoXSqrd(interpolatorTurret, 0.07);
 
-        if (Math.abs(deltaAngle) < 1) turret.setPower(0.0);
-        else turret.setPower(-speedTurret);
+        if (Math.abs(deltaAngle) < 3.14) turret.setPower(0.0);
+        else turret.setPower(speedTurret);
     }
 
     public void setTargetAngle(double angle) {

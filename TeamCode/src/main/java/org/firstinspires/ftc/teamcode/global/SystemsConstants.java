@@ -25,8 +25,8 @@ public final class SystemsConstants {
     }
 
     public static final class DeflectorConstants {
-        public static final double MIN_ANGLE = Math.toRadians(20);
-        public static final double MAX_ANGLE = Math.toRadians(40);
+        public final static double MAX_ANGLE = Math.toRadians(60);
+        public final static double MIN_ANGLE = Math.toRadians(40);
     }
 
     public static final class OuttakeConstants {
