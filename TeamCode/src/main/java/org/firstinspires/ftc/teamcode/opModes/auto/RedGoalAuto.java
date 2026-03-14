@@ -95,12 +95,12 @@ public class RedGoalAuto extends OpMode {
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
+                            new BezierLine(
                                     new Pose(48.374, 95.215).mirror(),
-                                    new Pose(63.294, 83.500).mirror(),
-                                    new Pose(43.056, 84.271).mirror()
+
+                                    new Pose(48.373, 134.242).mirror()
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(mirrorHeading(143)), Math.toRadians(mirrorHeading(180)))
+                    ).setLinearHeadingInterpolation(Math.toRadians(mirrorHeading(143)), Math.toRadians(mirrorHeading(90)))
 
                     .build();
 
@@ -215,6 +215,7 @@ public class RedGoalAuto extends OpMode {
             case END:
                 if(secondTimer.milliseconds() > 2000) {
                     shootingManager.shoot(2);
+                    follower.followPath(paths.Path2);
                 }
                 break;
         }

@@ -174,8 +174,10 @@ public class MainTeleOp extends OpMode {
                     false
             );
         }
-
-        if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
+        if(true) {
+            if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
+        }
+        if(gamepad1.aWasPressed()) shootingManager.shoot(1); //!!!
         if(gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
         if(gamepad1.left_trigger > 0.1){
             intakingManager.pull();

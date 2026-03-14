@@ -104,12 +104,12 @@ public class BlueGoalAuto extends OpMode {
                     .build();
 
             Path2 = follower.pathBuilder().addPath(
-                            new BezierCurve(
+                            new BezierLine(
                                     new Pose(48.374, 95.215),
-                                    new Pose(63.294, 83.500),
-                                    new Pose(45.092, 84.495)
+
+                                    new Pose(48.373, 134.242)
                             )
-                    ).setLinearHeadingInterpolation(Math.toRadians(137), Math.toRadians(180))
+                    ).setLinearHeadingInterpolation(Math.toRadians(137), Math.toRadians(90))
 
                     .build();
 
@@ -219,130 +219,12 @@ public class BlueGoalAuto extends OpMode {
                 break;
 
             case FIRST_WAIT:
-                if (secondTimer.milliseconds() > 800); {
-                setPathState(States.SHOOT_PRELOAD);
-            }
-            break;
+                if (secondTimer.milliseconds() > 2000) {
+                    setPathState(States.SHOOT_PRELOAD);
+                }
+                break;
 
             case SHOOT_PRELOAD:
-                if (!follower.isBusy()) {
-                    shootingManager.shoot(1);
-                    setPathState(States.SHOOT_PRELAOD_TO_INTAKE_LINE1);
-                }
-                break;
-
-            case SHOOT_PRELAOD_TO_INTAKE_LINE1:
-                if (!follower.isBusy() && !shootingManager.isBusy()) {
-                    shootingManager.shoot(2);
-                    follower.followPath(paths.Path2);
-                    setPathState(States.END);
-                }
-                break;
-
-            case INTAKE_LINE1_TO_FINISHED_INTAKE_LINE1:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path3, 0.5, true);
-                    setPathState(States.FINISHED_INTAKE_LINE1_TO_OPEN_GATE);
-                }
-                break;
-
-            case FINISHED_INTAKE_LINE1_TO_OPEN_GATE:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path4, 0.8, false);
-                    setPathState(States.OPEN_GATE_TO_SHOOT_LINE1);
-                }
-                break;
-
-            case OPEN_GATE_TO_SHOOT_LINE1:
-                if (!follower.isBusy()) {
-                    follower.followPath(paths.Path5);
-                    setPathState(States.SECOND_WAIT);
-                }
-                break;
-
-            case SECOND_WAIT:
-                if (secondTimer.milliseconds() > 1500); {
-                setPathState(States.SHOOT_LINE1);
-            }
-            break;
-
-            case SHOOT_LINE1:
-                if (!follower.isBusy()) {
-                    shootingManager.shoot(1);
-                    setPathState(States.SHOOT_LINE1_TO_INTAKE_LINE2);
-                }
-                break;
-
-            case SHOOT_LINE1_TO_INTAKE_LINE2:
-                if (!follower.isBusy() && !shootingManager.isBusy()) {
-                    shootingManager.shoot(2);
-                    follower.followPath(paths.Path6);
-                    setPathState(States.INTAKE_LINE2_TO_FINISHED_INTAKE_LINE2);
-                }
-                break;
-
-            case INTAKE_LINE2_TO_FINISHED_INTAKE_LINE2:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path7, 0.5, true);
-                    setPathState(States.FINISHED_INTAKE_LINE2_TO_SHOOT_LINE2);
-                }
-                break;
-
-            case FINISHED_INTAKE_LINE2_TO_SHOOT_LINE2:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path8);
-                    setPathState(States.THIRD_WAIT);
-                }
-                break;
-
-            case THIRD_WAIT:
-                if (secondTimer.milliseconds() > 1000); {
-                setPathState(States.SHOOT_LINE2);
-            }
-            break;
-
-            case SHOOT_LINE2:
-                if (!follower.isBusy()) {
-                    shootingManager.shoot(1);
-                    setPathState(States.SHOOT_LINE2_TO_INTAKE_LINE3);
-                }
-                break;
-
-            case SHOOT_LINE2_TO_INTAKE_LINE3:
-                if (!follower.isBusy() && !shootingManager.isBusy()) {
-                    shootingManager.shoot(2);
-                    follower.followPath(paths.Path9);
-                    setPathState(States.INTAKE_LINE3_TO_FINISHED_INTAKE_LINE3);
-                }
-                break;
-
-            case INTAKE_LINE3_TO_FINISHED_INTAKE_LINE3:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path10, 0.5, true);
-                    setPathState(States.FINISHED_INTAKE_LINE3_TO_SHOOT_LINE3);
-                }
-                break;
-
-            case FINISHED_INTAKE_LINE3_TO_SHOOT_LINE3:
-                if (!follower.isBusy()) {
-                    intakingManager.togglePull();
-                    follower.followPath(paths.Path11);
-                    setPathState(States.SHOOT_LINE3);
-                }
-                break;
-
-            case FOURTH_WAIT:
-                if (secondTimer.milliseconds() > 800); {
-                setPathState(States.SHOOT_LINE3);
-            }
-            break;
-
-            case SHOOT_LINE3:
                 if (!follower.isBusy()) {
                     shootingManager.shoot(1);
                     setPathState(States.END);
@@ -350,7 +232,10 @@ public class BlueGoalAuto extends OpMode {
                 break;
 
             case END:
-                shootingManager.shoot(2);
+                if(secondTimer.milliseconds() > 2000) {
+                    shootingManager.shoot(2);
+                    follower.followPath(paths.Path2);
+                }
                 break;
         }
     }

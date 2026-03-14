@@ -54,8 +54,8 @@ public class Turret {
     }
 
     public void setTurretDegrees(double angle) {
-        if (angle < -120) angle = -120;
-        else if (angle > 120) angle = 120;
+        if (angle < -80) angle = -80;
+        else if (angle > 805) angle = 80;
 
         deltaAngle = angle - getCurrentAngle();
         final double brakeDistance = 50;
@@ -66,6 +66,10 @@ public class Turret {
 
         if (Math.abs(deltaAngle) < 3.14) turret.setPower(0.0);
         else turret.setPower(speedTurret);
+    }
+
+    public boolean orientated(){
+        return Math.abs(deltaAngle) < 3;
     }
 
     public void setTargetAngle(double angle) {
