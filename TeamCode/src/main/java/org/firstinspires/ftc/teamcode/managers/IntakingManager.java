@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.managers;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.systems.Indexer;
 import org.firstinspires.ftc.teamcode.systems.Intake;
 import org.firstinspires.ftc.teamcode.global.SystemsConstants;
 
@@ -10,6 +11,8 @@ import static org.firstinspires.ftc.teamcode.global.SystemsConstants.IntakeConst
 public class IntakingManager {
     private final ElapsedTime timer = new ElapsedTime();
     private final Intake intake;
+    private final Indexer indexer;
+
 
     private enum State {
         IDLE,
@@ -20,8 +23,9 @@ public class IntakingManager {
 
     private State currentState = State.IDLE;
 
-    public IntakingManager(Intake intake) {
+    public IntakingManager(Intake intake, Indexer indexer) {
         this.intake = intake;
+        this.indexer = indexer;
     }
 
     public void togglePull() {
@@ -65,6 +69,11 @@ public class IntakingManager {
                     currentState = State.IDLE;
                     break;
                 }
+                indexer.intaking();
+
+
+
+
 
                 intake.pull();
                 break;

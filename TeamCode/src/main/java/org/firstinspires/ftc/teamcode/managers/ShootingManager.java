@@ -33,6 +33,7 @@ public class ShootingManager {
         IDLE,
         RAISE_STOPPER,
         SHOOT,
+        SHOOTAUTO,
         PULL_STOPER,
     }
 
@@ -64,6 +65,10 @@ public class ShootingManager {
         currentState = state;
     }
 
+    public void shootA(){
+        setState(State.SHOOTAUTO);
+    }
+
     public void shoot(int button) {
         if(button == 1) {
             shooting = true;
@@ -88,13 +93,13 @@ public class ShootingManager {
         double height;
         double angle;
         double g;
-        if (distance < 30){
+        if (distance < 90){
             distance = distance - ShootingConstants.VeryClose.PASS_THROUGH_POINT_RADIUS;
             height =  ShootingConstants.VeryClose.SCORE_HEIGHT;
             angle = ShootingConstants.VeryClose.SCORE_ANGLE;
             g = ShootingConstants.VeryClose.g;
         }
-        else if (distance < 125 && distance >= 30) {
+        else if (distance < 125 && distance >= 90) {
             distance = distance - ShootingConstants.Close.PASS_THROUGH_POINT_RADIUS;
             height =  ShootingConstants.Close.SCORE_HEIGHT;
             angle = ShootingConstants.Close.SCORE_ANGLE;
@@ -194,7 +199,12 @@ public class ShootingManager {
                 //if (timer.milliseconds() > THREE_BALLS_TIME) setState(State.PULL_STOPER);
 
                 break;
+            case SHOOTAUTO:
+                intakingManager.shootPull();
+                indexer.pull();
+                if (timer.milliseconds() > THREE_BALLS_TIME) setState(State.PULL_STOPER);
 
+                break;
             case PULL_STOPER:
                 indexer.off();
                 stopper.close();

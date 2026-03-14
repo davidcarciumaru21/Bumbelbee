@@ -44,7 +44,8 @@ public class Turret {
     public double twoXSqrd(double x, double vMin) {
         if (x == 0) return 0;
 
-        double speed = 1.55 * x * x;
+        //1.55 *
+        double speed = x * x;
         double sign = x / Math.abs(x);
 
         if (vMin > Math.abs(speed)) return vMin * sign;
@@ -57,7 +58,7 @@ public class Turret {
         else if (angle > 120) angle = 120;
 
         deltaAngle = angle - getCurrentAngle();
-        final double brakeDistance = 60;
+        final double brakeDistance = 50;
         interpolatorTurret = deltaAngle / brakeDistance;
 
         if (Math.abs(interpolatorTurret) > 1) interpolatorTurret = interpolatorTurret / Math.abs(interpolatorTurret);

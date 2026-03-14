@@ -112,7 +112,7 @@ public class MainTeleOp extends OpMode {
             limelight = new Limelight(hardwareMap, 1);
         }
 
-        intakingManager = new IntakingManager(intake);
+        intakingManager = new IntakingManager(intake, indexer);
         shootingManager = new ShootingManager(outtake, stopper, deflector, indexer, intakingManager);
 
         timer = new ElapsedTime();
@@ -155,9 +155,6 @@ public class MainTeleOp extends OpMode {
                     : DrivingType.ROBOT_CENTRIC;
         }
 
-        if (gamepad1.left_trigger > 0.1) gamepad1Coef = 0.4;
-        else gamepad1Coef = 1.0;
-
         forward = -gamepad1.left_stick_y * gamepad1Coef;
         strafe = -gamepad1.left_stick_x * gamepad1Coef;
         rotation = -gamepad1.right_stick_x * gamepad1Coef;
@@ -180,7 +177,7 @@ public class MainTeleOp extends OpMode {
 
         if (gamepad1.rightBumperWasPressed()) shootingManager.shoot(1);
         if(gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
-        if(gamepad1.right_trigger > 0.1){
+        if(gamepad1.left_trigger > 0.1){
             intakingManager.pull();
         }
         else{
@@ -205,7 +202,13 @@ public class MainTeleOp extends OpMode {
 
             double currentHeading = follower.getPose().getHeading();
 
-            error = targetHeading - currentHeading;
+            error = Math.toDegrees(targetHeading - currentHeading);
+            if(error > 360){
+                error = error - (360 * (int)(error / 360));
+            }
+            else if(error < -360){
+                error = error + (-360 * (int)(error / 360));
+            }
             turret.setTurretDegrees(Math.toDegrees(-error));
 
         if (allianceColor.equals(AllianceColor.RED.toString())) {
@@ -288,7 +291,7 @@ public class MainTeleOp extends OpMode {
 
         panelsTelemetry.addData("distance", follower.getPose().distanceFrom(Poses.blueGoalPose));
 
-        /*
+
         telemetry.addData("target angle", Math.toDegrees(-error));
         telemetry.addData("delta", turret.deltaAngle);
         telemetry.addData("interpolator", turret.interpolatorTurret);
@@ -299,7 +302,7 @@ public class MainTeleOp extends OpMode {
         panelsTelemetry.addData("angle", turret.getCurrentAngle());
         panelsTelemetry.addData("speed", turret.speedTurret);
 
-         */
+
 
         panelsTelemetry.update();
         telemetry.update();

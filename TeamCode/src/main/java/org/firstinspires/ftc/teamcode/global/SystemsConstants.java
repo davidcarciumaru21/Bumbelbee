@@ -5,8 +5,8 @@ public final class SystemsConstants {
     public static final class StopperConstants {
         public static final double STOPPER_OPENED_POSITON = 0.15;
         public static final double STOPPER_CLOSED_POSITON = 0.625;
-        public static final double TIME_TO_OPEN = 500;
-        public static final double TIME_TO_CLOSE = 200;
+        public static final double TIME_TO_OPEN = 150;
+        public static final double TIME_TO_CLOSE = 150;
     }
 
     public static final class IntakeConstants {

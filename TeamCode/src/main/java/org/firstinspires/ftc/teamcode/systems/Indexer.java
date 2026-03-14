@@ -34,6 +34,9 @@ public class Indexer {
     public void off() {
         indexer.setPower(0);
     }
+    public void intaking(){
+        indexer.setPower(0.2);
+    }
     public DcMotorEx getTurret(){
         return indexer;
     }

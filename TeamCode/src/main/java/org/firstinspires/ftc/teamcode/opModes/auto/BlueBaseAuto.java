@@ -387,7 +387,7 @@ public class BlueBaseAuto extends OpMode {
         stopper = new Stopper(hardwareMap);
         intake = new Intake(hardwareMap);
 
-        intakingManager = new IntakingManager(intake);
+        intakingManager = new IntakingManager(intake, indexer);
         shootingManager = new ShootingManager(outtake,stopper, deflector,indexer, intakingManager);
 
         paths = new Paths(follower);
