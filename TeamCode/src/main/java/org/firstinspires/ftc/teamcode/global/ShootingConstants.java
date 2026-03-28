@@ -3,16 +3,16 @@ package org.firstinspires.ftc.teamcode.global;
 public final class ShootingConstants {
 
     public static final class VeryClose {
-        public static final double SCORE_HEIGHT = 51;
-        public static final double PASS_THROUGH_POINT_RADIUS = 2;
+        public static final double SCORE_HEIGHT = 32;
+        public static final double PASS_THROUGH_POINT_RADIUS = 15;
         public static final double SCORE_ANGLE = Math.toRadians(-25);
         public static final double g = 386.1;
     }
 
     public static final class Close {
-        public static final double SCORE_HEIGHT = 37;
-        public static final double PASS_THROUGH_POINT_RADIUS = 2;
-        public static final double SCORE_ANGLE = Math.toRadians(-20);
+        public static final double SCORE_HEIGHT = 25;
+        public static final double PASS_THROUGH_POINT_RADIUS = -10;
+        public static final double SCORE_ANGLE = Math.toRadians(-5);
         public static final double g = 386.1;
     }
 

@@ -79,7 +79,7 @@ public class Turret {
     }
 
     public double getCurrentAngle() {
-        return (double) encoder.getCurrentPosition() / 6 / TICKS_PER_REV * 360.0;
+        return (double) encoder.getCurrentPosition() / 5.714 / TICKS_PER_REV * 360.0;
     }
 
     public void update() {

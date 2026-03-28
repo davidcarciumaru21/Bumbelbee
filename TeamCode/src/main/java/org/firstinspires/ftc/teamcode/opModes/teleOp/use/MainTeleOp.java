@@ -179,12 +179,17 @@ public class MainTeleOp extends OpMode {
         }
         if(gamepad1.aWasPressed()) shootingManager.shoot(1); //!!!
         if(gamepad1.leftBumperWasPressed()) shootingManager.shoot(2);
-        if(gamepad1.left_trigger > 0.1){
+        if(gamepad1.right_trigger > 0.1){
             intakingManager.pull();
         }
         else{
             intakingManager.off();
         }
+
+        if(gamepad1.left_trigger > 0.1){
+            gamepad1Coef = 0.4;
+        }
+        else gamepad1Coef = 1.0;
         if(gamepad1.aWasPressed()) turretAim = !turretAim;
 
         follower.update();
