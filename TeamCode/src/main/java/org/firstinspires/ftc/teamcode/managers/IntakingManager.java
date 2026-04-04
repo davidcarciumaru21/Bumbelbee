@@ -69,7 +69,6 @@ public class IntakingManager {
                     currentState = State.IDLE;
                     break;
                 }
-                indexer.intaking();
 
 
 

@@ -181,7 +181,7 @@ public class ShootingManager {
         switch (currentState) {
 
             case IDLE:
-                indexer.off();
+                indexer.intaking();
                 stopper.close();
                 break;
 
